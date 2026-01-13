@@ -10,7 +10,7 @@ app = FastAPI(title="Secure CI/CD Demo")
 NOTES: Dict[str, str] = {}
 
 class NoteCreate(BaseModel):
-    # ограничим длину — это уже “security-minded” validation
+    
     text: str = Field(min_length=1, max_length=280)
 
 class NoteOut(BaseModel):
@@ -22,7 +22,9 @@ def health():
     return {"status": "ok"}
 
 @app.get("/hello")
-def hello(name: str = "world"):
+def hello(name: str = "mr unicorn"):
+    if name == "anya":
+        return {"message": "hello, blonde"}
     return {"message": f"hello, {name}"}
 
 @app.post("/notes", response_model=NoteOut, status_code=201)
