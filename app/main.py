@@ -7,5 +7,7 @@ def health():
     return {"status": "ok"}
 
 @app.get("/hello")
-def hello(name: str = "world"):
+def hello(name: str = "mr unicorn"):
+    if name == "anya":
+        return {"message": "hello, blonde"}
     return {"message": f"hello, {name}"}
