@@ -1,0 +1,10 @@
+min_test_coverage: 80
+
+block_if:
+  secrets: true
+  sast_high: true
+  dependency_critical: true
+
+allowlist:
+  semgrep_rules:
+    - python.lang.security.audit
