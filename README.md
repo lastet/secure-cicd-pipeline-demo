@@ -1,5 +1,8 @@
 # Secure CI/CD Pipeline Demo (DevSecOps)
 
+![CI](../../actions/workflows/ci.yml/badge.svg)
+
+
 A minimal FastAPI project with a CI/CD pipeline that includes automated testing and security gates.
 
 ## What the pipeline does
