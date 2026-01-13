@@ -36,6 +36,11 @@ http://127.0.0.1:8000/hello?name=blonde
 cd ~
 git clone https://github.com/lastet/secure-cicd-pipeline-demo.git
 
+
+cd secure-cicd-pipeline-demo
+ls
+
+
 python -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
