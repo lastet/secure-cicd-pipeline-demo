@@ -11,7 +11,8 @@ On every push / pull request:
 - ✅ Scans for leaked secrets (Gitleaks)
 - ✅ Scans dependencies/filesystem for HIGH/CRITICAL vulnerabilities (Trivy)
 - ✅ Runs SAST static analysis (Semgrep)
-- ❌ Fails the pipeline if any security gate finds issues
+- 🚫 Automatically blocks the pipeline if any security gate finds issues
+
 
 ## Tech
 - GitHub Actions
@@ -19,10 +20,14 @@ On every push / pull request:
 - Gitleaks, Trivy, Semgrep
 - Dependabot updates
 
-  Open:
-http://127.0.0.1:8000/health
-http://127.0.0.1:8000/hello
-http://127.0.0.1:8000/hello?name=blonde
+  Open:    
+  
+http://127.0.0.1:8000/health    
+
+http://127.0.0.1:8000/hello    
+
+http://127.0.0.1:8000/hello?name=blonde    
+
 
 
 ## Run locally
