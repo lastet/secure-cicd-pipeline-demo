@@ -8,7 +8,6 @@ on:
 
 permissions:
   contents: read
-  security-events: write
 
 jobs:
   build-test-security:
@@ -27,18 +26,14 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
+          pip install pyyaml
 
       # ---------- Tests ----------
-    
-        
-          
-          
       - name: Run tests
         env:
           PYTHONPATH: .
         run: |
           pytest -q --junitxml=pytest-junit.xml
-
 
       - name: Upload test report artifact
         uses: actions/upload-artifact@v4
@@ -47,24 +42,33 @@ jobs:
           name: test-reports
           path: pytest-junit.xml
 
-      # ---------- Secrets scan ----------
-      - name: Gitleaks (secrets scan)
-        uses: gitleaks/gitleaks-action@v2
-    
-  
+      # ---------- Secrets scan (report only; policy decides) ----------
+      - name: Gitleaks (report)
+        run: |
+          docker run --rm -v "$PWD:/repo" zricethezav/gitleaks:latest detect \
+            --source=/repo \
+            --report-format json \
+            --report-path gitleaks-report.json \
+            --no-git || true
 
-      # ---------- Dependency/Vuln scan ----------
-      - name: Trivy (fs scan)
+      # ---------- Dependency/Vuln scan (report only; policy decides) ----------
+      - name: Trivy (report)
         uses: aquasecurity/trivy-action@0.28.0
         with:
           scan-type: "fs"
           scan-ref: "."
-          format: "table"
+          format: "json"
+          output: "trivy-report.json"
           severity: "HIGH,CRITICAL"
-          exit-code: "1"
+          exit-code: "0"
 
-      # ---------- SAST ----------
-      - name: Semgrep (SAST)
+      # ---------- SAST (report only; policy decides) ----------
+      - name: Semgrep (report)
         run: |
-          python -m pip install semgrep
-          semgrep --config p/ci --error
+          pip install semgrep
+          semgrep --config p/ci --json > semgrep-report.json || true
+
+      # ---------- Policy Gate (final decision) ----------
+      - name: Policy Gate
+        run: |
+          python tools/policy_check.py
