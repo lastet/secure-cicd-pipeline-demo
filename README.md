@@ -30,7 +30,8 @@ Edit any test expectation (for example change `"hello, world"` to `"hello, blond
 The **Run tests** step will fail with an AssertionError.
 
 ### 2) Fail the pipeline via secrets gate (safe demo)
-Create a temporary file `demo_secret.txt` with a fake secret-like string, commit, and push:AWS_SECRET_ACCESS_KEY=****random_fake_key****
+Create a temporary file `demo_secret.txt` with a fake secret-like string, commit, and push:AWS_SECRET_ACCESS_KEY=****random_fake_key****    
+
 The secrets scan will report a finding, and the **Policy Gate** will block the pipeline.
 
 
