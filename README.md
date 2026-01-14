@@ -27,6 +27,7 @@ This repo includes a policy-driven CI pipeline. To demonstrate enforcement, you 
 
 ### 1) Fail the pipeline via tests
 Edit any test expectation (for example change `"hello, world"` to `"hello, blonde"`) and push the commit.
+    
 The **Run tests** step will fail with an AssertionError.
 
 ### 2) Fail the pipeline via secrets gate (safe demo)
