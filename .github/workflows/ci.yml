@@ -44,18 +44,17 @@ jobs:
           path: pytest-junit.xml
 
       # ---------- Secrets scan (report only; policy decides) ----------
-      - name: Gitleaks (report)
+          - name: Gitleaks (report)
         uses: gitleaks/gitleaks-action@v2
-        env:
-          GITLEAKS_LICENSE: ""
+        continue-on-error: true
         with:
           args: >
             detect
             --source .
             --report-format json
-            --report-path gitleaks-report.json
+            --report-path ./gitleaks-report.json
             --no-git
-        continue-on-error: true
+
 
       - name: Debug gitleaks report
         if: always()
