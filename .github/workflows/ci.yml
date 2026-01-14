@@ -44,7 +44,7 @@ jobs:
           path: pytest-junit.xml
 
       # ---------- Secrets scan (report only; policy decides) ----------
-          - name: Gitleaks (report)
+      - name: Gitleaks (report)
         uses: gitleaks/gitleaks-action@v2
         continue-on-error: true
         with:
