@@ -26,7 +26,7 @@ On every push / pull request:
 This repo includes a policy-driven CI pipeline. To demonstrate enforcement, you can intentionally trigger failures:
 
 ### 1) Fail the pipeline via tests
-Edit any test expectation (for example change `"hello, world"` to `"hello, blonde"`) and push the commit.
+Edit any test expectation (for example change `"hello, blonde" to "hello, world"`) and push the commit.
     
 The **Run tests** step will fail with an AssertionError.
 
