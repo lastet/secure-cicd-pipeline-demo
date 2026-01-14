@@ -50,6 +50,18 @@ jobs:
             --report-format json \
             --report-path gitleaks-report.json \
             --no-git || true
+
+      - name: Debug gitleaks report
+        if: always()
+        run: |
+          echo "PWD=$(pwd)"
+          ls -la
+          echo "---- gitleaks-report.json exists? ----"
+          ls -la gitleaks-report.json || true
+          echo "---- first 60 lines ----"
+          sed -n '1,60p' gitleaks-report.json || true
+            
+  
    
 
       # ---------- Dependency/Vuln scan (report only; policy decides) ----------
