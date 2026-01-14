@@ -20,13 +20,20 @@ On every push / pull request:
 - Gitleaks, Trivy, Semgrep
 - Dependabot updates
 
-  Open:    
-  
-http://127.0.0.1:8000/health    
 
-http://127.0.0.1:8000/hello    
+## Controlled failure demo (how to make CI fail on purpose)
 
-http://127.0.0.1:8000/hello?name=blonde    
+This repo includes a policy-driven CI pipeline. To demonstrate enforcement, you can intentionally trigger failures:
+
+### 1) Fail the pipeline via tests
+Edit any test expectation (for example change `"hello, world"` to `"hello, blonde"`) and push the commit.
+The **Run tests** step will fail with an AssertionError.
+
+### 2) Fail the pipeline via secrets gate (safe demo)
+Create a temporary file `demo_secret.txt` with a fake secret-like string, commit, and push:AWS_SECRET_ACCESS_KEY=****random_fake_key****
+The secrets scan will report a finding, and the **Policy Gate** will block the pipeline.
+
+
 
 
 
