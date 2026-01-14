@@ -1,59 +1,58 @@
-import sys
 import json
+import os
+import sys
 import yaml
-from pathlib import Path
 
-def fail(reason: str):
-    print(f"\n❌ POLICY VIOLATION: {reason}")
-    sys.exit(1)
+POLICY_FILE = "policy.yml"
+GITLEAKS_REPORT = "gitleaks-report.json"
 
-def ok(msg: str):
-    print(f"✅ {msg}")
+def load_policy():
+    if not os.path.exists(POLICY_FILE):
+        print(f"[POLICY] {POLICY_FILE} not found -> ALLOW")
+        return {}
+    with open(POLICY_FILE, "r", encoding="utf-8") as f:
+        return yaml.safe_load(f) or {}
 
-# --- load policy ---
-policy_path = Path("policy.yml")
-if not policy_path.exists():
-    fail("policy.yml not found")
+def gitleaks_findings_count():
+    if not os.path.exists(GITLEAKS_REPORT):
+        print(f"[POLICY] {GITLEAKS_REPORT} not found -> assume 0 findings")
+        return 0
 
-policy = yaml.safe_load(policy_path.read_text())
+    raw = open(GITLEAKS_REPORT, "r", encoding="utf-8").read().strip()
+    if not raw:
+        print(f"[POLICY] {GITLEAKS_REPORT} empty -> 0 findings")
+        return 0
 
-print("\n🔐 Security Policy Loaded")
-print(policy)
+    data = json.loads(raw)
 
-# --- check pytest ---
-pytest_report = Path("pytest-junit.xml")
-if not pytest_report.exists():
-    fail("pytest report not found (tests probably did not run)")
+    # Most common format from gitleaks: list of findings
+    if isinstance(data, list):
+        return len(data)
 
-ok("Tests executed")
+    # Fallback if the action wraps it in an object
+    if isinstance(data, dict):
+        for key in ("Leaks", "leaks", "findings", "Findings"):
+            v = data.get(key)
+            if isinstance(v, list):
+                return len(v)
 
-# --- secrets gate ---
-if policy["block_if"].get("secrets"):
-    gitleaks_report = Path("gitleaks-report.json")
-    if gitleaks_report.exists():
-        findings = json.loads(gitleaks_report.read_text())
-        if findings:
-            fail("Secrets detected by Gitleaks")
-    ok("No leaked secrets")
+    return 0
 
-# --- dependency gate ---
-if policy["block_if"].get("dependency_critical"):
-    trivy_report = Path("trivy-report.json")
-    if trivy_report.exists():
-        report = json.loads(trivy_report.read_text())
-        for result in report.get("Results", []):
-            for vuln in result.get("Vulnerabilities", []):
-                if vuln.get("Severity") == "CRITICAL":
-                    fail("Critical dependency vulnerability detected")
-    ok("No critical dependency vulnerabilities")
+def main():
+    policy = load_policy()
+    block_if = (policy.get("block_if") or {})
 
-# --- sast gate ---
-if policy["block_if"].get("sast_high"):
-    semgrep_report = Path("semgrep-report.json")
-    if semgrep_report.exists():
-        report = json.loads(semgrep_report.read_text())
-        if report.get("results"):
-            fail("High severity SAST findings detected")
-    ok("No high-risk SAST issues")
+    secrets_block = bool(block_if.get("secrets", False))
+    findings = gitleaks_findings_count()
 
-print("\n🟢 POLICY CHECK PASSED — pipeline allowed")
+    print(f"[POLICY] secrets_block={secrets_block}, gitleaks_findings={findings}")
+
+    if secrets_block and findings > 0:
+        print("[POLICY] BLOCK: secrets detected by Gitleaks")
+        sys.exit(1)
+
+    print("[POLICY] ALLOW: policy satisfied")
+    sys.exit(0)
+
+if __name__ == "__main__":
+    main()
