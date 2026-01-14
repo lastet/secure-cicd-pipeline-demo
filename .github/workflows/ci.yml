@@ -43,13 +43,18 @@ jobs:
           path: pytest-junit.xml
 
       # ---------- Secrets scan (report only; policy decides) ----------
-      - name: Gitleaks (report)
-        run: |
-          docker run --rm -v "$PWD:/repo" zricethezav/gitleaks:latest detect \
-            --source=/repo \
-            --report-format json \
-            --report-path gitleaks-report.json \
-            --no-git || true
+          - name: Gitleaks (report)
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITLEAKS_LICENSE: ""
+        with:
+          args: >
+            detect
+            --source .
+            --report-format json
+            --report-path gitleaks-report.json
+            --no-git
+        continue-on-error: true
 
       - name: Debug gitleaks report
         if: always()
