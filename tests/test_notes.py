@@ -38,5 +38,5 @@ def test_validation_rejects_empty():
 def test_escapes_html_in_note_text():
     r = client.post("/notes", json={"text": "<script>alert(1)</script>"})
     assert r.status_code == 201
-    # убеждаемся, что теги экранировались
+   
     assert r.json()["text"] == "&lt;script&gt;alert(1)&lt;/script&gt;"
