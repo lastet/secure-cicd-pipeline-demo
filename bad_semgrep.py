@@ -1,5 +1,4 @@
-import os
-import subprocess
+import pickle
 
-cmd = "ls " + os.getenv("USER_INPUT", "")
-subprocess.run(cmd, shell=True)  # semgrep часто ругается на shell=True
+data = pickle.loads(user_input)
+
