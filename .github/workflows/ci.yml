@@ -43,7 +43,7 @@ jobs:
           path: pytest-junit.xml
 
       # ---------- Secrets scan (report only; policy decides) ----------
-          - name: Gitleaks (report)
+      - name: Gitleaks (report)
         uses: gitleaks/gitleaks-action@v2
         env:
           GITLEAKS_LICENSE: ""
@@ -65,9 +65,6 @@ jobs:
           ls -la gitleaks-report.json || true
           echo "---- first 60 lines ----"
           sed -n '1,60p' gitleaks-report.json || true
-            
-  
-   
 
       # ---------- Dependency/Vuln scan (report only; policy decides) ----------
       - name: Trivy (report)
