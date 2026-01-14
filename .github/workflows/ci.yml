@@ -49,7 +49,7 @@ jobs:
             --source=/repo \
             --report-format json \
             --report-path gitleaks-report.json \
-            --no-git || true
+   
 
       # ---------- Dependency/Vuln scan (report only; policy decides) ----------
       - name: Trivy (report)
