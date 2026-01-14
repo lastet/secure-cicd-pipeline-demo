@@ -16,4 +16,4 @@ def test_hello_default():
 def test_hello_custom():
     r = client.get("/hello?name=anya")
     assert r.status_code == 200
-    assert r.json()["message"] == "hello, world"
+    assert r.json()["message"] == "hello, blonde"
